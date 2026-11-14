@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Legado Espacial — Da Lua a Marte</title>
+<style>
+:root{--bg:#0b0f19;--card:#151c2c;--card-hover:#1d263b;--accent:#38bdf8;--gold:#facc15;--green:#4ade80;--red:#f87171;--orange:#fb923c;--text:#f1f5f9;--muted:#94a3b8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+body{background:var(--bg);color:var(--text);line-height:1.6;padding-bottom:50px}
+header{background:linear-gradient(180deg,#111827 0%,var(--bg) 100%);padding:20px 16px;text-align:center;border-bottom:1px solid #1e293b}
+header h1{font-size:2rem;letter-spacing:1px;color:var(--accent)}
+header p{color:var(--muted);font-size:.95rem;margin-top:4px}
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:100;background:rgba(15,23,42,.96);backdrop-filter:blur(8px);border-bottom:1px solid #1e293b;padding:12px 20px;display:flex;justify-content:center;align-items:center;gap:22px;flex-wrap:wrap}
+.engine-panel{display:flex;align-items:center;gap:14px;background:#0f172a;border:1px solid #334155;padding:8px 14px;border-radius:12px;transition:border-color .3s,box-shadow .3s}
+.engine-panel.overdrive{border-color:var(--orange);box-shadow:0 0 18px rgba(251,146,60,.45)}
+.gear-box{position:relative;width:66px;height:52px}
+.gear-svg{position:absolute;transform-origin:center}
+#gear-main{width:38px;height:38px;top:2px;left:2px;fill:var(--gold)}
+#gear-sec{width:26px;height:26px;top:22px;left:34px;fill:var(--accent)}
+#gear-ter{width:20px;height:20px;top:2px;left:40px;fill:#94a3b8}
+.engine-panel.overdrive #gear-main{fill:var(--orange)}
+.engine-info{display:flex;flex-direction:column;min-width:150px}
+.engine-title{font-size:.72rem;text-transform:uppercase;color:var(--muted);letter-spacing:.8px}
+.engine-rpm{font-size:.85rem;font-weight:bold;color:var(--accent)}
+.engine-panel.overdrive .engine-rpm{color:var(--orange)}
+.rpm-bar-bg{width:100%;height:6px;background:#1e293b;border-radius:4px;overflow:hidden;margin-top:4px}
+.rpm-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .15s ease-out}
+.engine-panel.overdrive .rpm-bar-fill{background:linear-gradient(90deg,var(--gold),var(--orange))}
+.stat{text-align:center}
+.stat-label{font-size:.75rem;text-transform:uppercase;color:var(--muted);letter-spacing:1px}
+.stat-value{font-size:1.5rem;font-weight:bold;color:var(--gold)}
+.click-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2563eb,#38bdf8);border:none;color:#fff;font-size:1.1rem;font-weight:bold;padding:12px 22px;border-radius:50px;cursor:pointer;box-shadow:0 0 15px rgba(56,189,248,.4);transition:transform .08s;user-select:none}
+.click-btn:active{transform:scale(.93)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+nav{display:flex;justify-content:center;gap:8px;padding:16px;flex-wrap:wrap}
+.tab-btn{background:var(--card);color:var(--text);border:1px solid #1e293b;padding:10px 18px;border-radius:8px;cursor:pointer;font-weight:600;transition:.2s}
+.tab-btn.active{background:var(--accent);color:#0b0f19;border-color:var(--accent)}
+.tab-btn:hover:not(.active){background:var(--card-hover)}
+main{max-width:900px;margin:0 auto;padding:0 16px}
+.section{display:none}.section.active{display:block}
+.section-header{margin-bottom:16px}
+.section-header h2{font-size:1.4rem;color:var(--accent)}
+.section-header p{color:var(--muted);font-size:.9rem;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid #1e293b;border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:.2s}
+.card:hover{border-color:#334155}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+.card-title{font-weight:bold;font-size:1.05rem}
+.badge{background:#1e293b;color:var(--accent);padding:2px 8px;border-radius:12px;font-size:.8rem;font-weight:bold;white-space:nowrap}
+.card-desc{font-size:.85rem;color:var(--muted);margin-bottom:12px}
+.card-meta{font-size:.85rem;color:var(--green);margin-bottom:12px}
+.buy-btn{width:100%;padding:10px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;background:var(--gold);color:#0b0f19;transition:.2s}
+.buy-btn:disabled{background:#334155;color:#64748b;cursor:not-allowed}
+.planet-tabs{display:flex;gap:8px;margin-bottom:12px}
+.planet-btn{background:var(--card);color:var(--text);border:1px solid #334155;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600}
+.planet-btn.active{border-color:var(--gold);color:var(--gold)}
+.terrain-box{background:radial-gradient(circle at top,#1e293b,#0f172a);border:1px solid #334155;border-radius:12px;padding:20px;min-height:220px}
+.terrain-box.marte{background:radial-gradient(circle at top,#4a2318,#1a0f0c);border-color:#7c3a28}
+.terrain-box p{color:var(--muted);font-size:.9rem}
+.terrain-items{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+.terrain-item{background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);padding:8px 14px;border-radius:8px;font-size:.9rem}
+.story-reader{background:var(--card);border:1px solid #1e293b;border-radius:12px;padding:24px}
+.story-text{margin:16px 0;font-size:1rem;color:#e2e8f0;white-space:pre-line;max-width:70ch}
+.quiz-box{margin-top:24px;padding-top:20px;border-top:1px dashed #334155}
+.quiz-box h4{color:var(--gold);margin-bottom:10px}
+.quiz-options{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.quiz-opt{background:#1e293b;color:var(--text);border:1px solid #334155;padding:10px 14px;border-radius:8px;text-align:left;cursor:pointer;transition:.2s}
+.quiz-opt:hover:not(:disabled){background:#283548;border-color:var(--accent)}
+.quiz-opt.correct{background:rgba(74,222,128,.2);border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong{background:rgba(248,113,113,.2);border-color:var(--red);color:var(--red)}
+.quiz-msg{margin-top:10px;font-weight:bold;color:var(--green)}
+.back-btn{background:transparent;border:1px solid #334155;color:var(--muted);padding:6px 12px;border-radius:6px;cursor:pointer;margin-bottom:12px}
+.back-btn:hover{color:var(--text);border-color:var(--text)}
+.card.unlocked{border-color:var(--gold);background:rgba(250,204,21,.08)}
+.card.bought{opacity:.7;border-color:var(--green)}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:40px;padding:0 16px}
+.reset-btn{background:transparent;border:1px solid #334155;color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;margin-top:8px}
+.reset-btn:hover{color:var(--red);border-color:var(--red)}
+.empty{color:var(--muted);font-size:.9rem}
+#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--gold);color:#0b0f19;padding:10px 18px;border-radius:10px;font-weight:bold;opacity:0;pointer-events:none;transition:opacity .3s;z-index:200;text-align:center}
+#toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🚀 LEGADO ESPACIAL</h1>
+  <p>Da Lua a Marte: a história da exploração humana</p>
+</header>
+
+<div class="hud">
+  <div class="engine-panel" id="engine-panel" title="Clique repetidamente para encher o medidor e ativar o Turbo 2x!">
+    <div class="gear-box">
+      <svg id="gear-main" class="gear-svg" viewBox="0 0 100 100"><path d="M94 56V44l-11.2-2.2c-.8-3.2-2-6.2-3.6-9l6.5-9.4-8.5-8.5-9.4 6.5c-2.8-1.6-5.8-2.8-9-3.6L56 6H44l-2.2 11.2c-3.2.8-6.2 2-9 3.6l-9.4-6.5-8.5 8.5 6.5 9.4c-1.6 2.8-2.8 5.8-3.6 9L6 44v12l11.2 2.2c.8 3.2 2 6.2 3.6 9l-6.5 9.4 8.5 8.5 9.4-6.5c2.8 1.6 5.8 2.8 9 3.6L44 94h12l2.2-11.2c3.2-.8 6.2-2 9-3.6l9.4 6.5 8.5-8.5-6.5-9.4c1.6-2.8 2.8-5.8 3.6-9L94 56zM50 68c-9.9 0-18-8.1-18-18s8.1-18 18-18 18 8.1 18 18-8.1 18-18 18z"/></svg>
+      <svg id="gear-sec" class="gear-svg" viewBox="0 0 100 100"><path d="M94 56V44l-11.2-2.2c-.8-3.2-2-6.2-3.6-9l6.5-9.4-8.5-8.5-9.4 6.5c-2.8-1.6-5.8-2.8-9-3.6L56 6H44l-2.2 11.2c-3.2.8-6.2 2-9 3.6l-9.4-6.5-8.5 8.5 6.5 9.4c-1.6 2.8-2.8 5.8-3.6 9L6 44v12l11.2 2.2c.8 3.2 2 6.2 3.6 9l-6.5 9.4 8.5 8.5 9.4-6.5c2.8 1.6 5.8 2.8 9 3.6L44 94h12l2.2-11.2c3.2-.8 6.2-2 9-3.6l9.4 6.5 8.5-8.5-6.5-9.4c1.6-2.8 2.8-5.8 3.6-9L94 56zM50 66c-8.8 0-16-7.2-16-16s7.2-16 16-16 16 7.2 16 16-7.2 16-16 16z"/></svg>
+      <svg id="gear-ter" class="gear-svg" viewBox="0 0 100 100"><path d="M94 56V44l-11.2-2.2c-.8-3.2-2-6.2-3.6-9l6.5-9.4-8.5-8.5-9.4 6.5c-2.8-1.6-5.8-2.8-9-3.6L56 6H44l-2.2 11.2c-3.2.8-6.2 2-9 3.6l-9.4-6.5-8.5 8.5 6.5 9.4c-1.6 2.8-2.8 5.8-3.6 9L6 44v12l11.2 2.2c.8 3.2 2 6.2 3.6 9l-6.5 9.4 8.5 8.5 9.4-6.5c2.8 1.6 5.8 2.8 9 3.6L44 94h12l2.2-11.2c3.2-.8 6.2-2 9-3.6l9.4 6.5 8.5-8.5-6.5-9.4c1.6-2.8 2.8-5.8 3.6-9L94 56zM50 64c-7.7 0-14-6.3-14-14s6.3-14 14-14 14 6.3 14 14-6.3 14-14 14z"/></svg>
+    </div>
+    <div class="engine-info">
+      <span class="engine-title">Motor de Engrenagens</span>
+      <span class="engine-rpm" id="rpm-text">0 RPM (Parado)</span>
+      <div class="rpm-bar-bg"><div class="rpm-bar-fill" id="rpm-fill"></div></div>
+    </div>
+  </div>
+  <div class="stat"><div class="stat-label">Engrenagens</div><div class="stat-value"><span id="gears">0</span> ⚙</div></div>
+  <div class="stat"><div class="stat-label">Produção</div><div class="stat-value" id="gps">0/s</div></div>
+  <button class="click-btn" id="manual-click-btn"></button>
+</div>
+
+<nav>
+  <button class="tab-btn active" data-tab="research">🔬 Pesquisa</button>
+  <button class="tab-btn" data-tab="terrain">🌕 Terreno</button>
+  <button class="tab-btn" data-tab="story">📖 História</button>
+  <button class="tab-btn" data-tab="upgrades">⚡ Melhorias</button>
+  <button class="tab-btn" data-tab="achievements">🏆 Conquistas</button>
+</nav>
+
+<main>
+  <section class="section active" id="research">
+    <div class="section-header"><h2>Centro de pesquisa</h2><p>Compre equipamentos históricos para alimentar o motor automaticamente. O custo sobe 15% a cada unidade instalada.</p></div>
+    <div class="planet-tabs"><button class="planet-btn active" data-planet="lua">🌕 Lua</button><button class="planet-btn" data-planet="marte">🔴 Marte 🔒</button></div>
+    <div class="grid" id="research-grid"></div>
+  </section>
+  <section class="section" id="terrain">
+    <div class="section-header"><h2>Terreno de exploração</h2><p>Esta área mostra o ambiente e os equipamentos que você já comprou. As histórias ficam na aba História.</p></div>
+    <div class="planet-tabs">
+      <button class="planet-btn active" data-planet="lua">🌕 Lua</button>
+      <button class="planet-btn" data-planet="marte">🔴 Marte</button>
+    </div>
+    <div class="terrain-box" id="terrain-box">
+      <h3 id="terrain-title"></h3><p id="terrain-desc"></p>
+      <div class="terrain-items" id="terrain-items"></div>
+    </div>
+  </section>
+  <section class="section" id="story">
+    <div class="section-header"><h2>Arquivo histórico das missões</h2><p>A primeira compra de um equipamento libera sua missão. Leia o capítulo e responda ao questionário para ganhar recompensas!</p></div>
+    <div id="story-body"></div>
+  </section>
+  <section class="section" id="upgrades">
+    <div class="section-header"><h2>Melhorias tecnológicas</h2><p>Melhorias aumentam a eficiência do motor de engrenagens e de todos os equipamentos.</p></div>
+    <div class="grid" id="upgrades-grid"></div>
+  </section>
+  <section class="section" id="achievements">
+    <div class="section-header"><h2>Conquistas</h2><p>Marcos históricos atingidos durante a sua jornada espacial.</p></div>
+    <div class="grid" id="ach-grid"></div>
+  </section>
+</main>
+
+<footer>
+  <p>Legado Espacial — projeto educativo independente. Não é um produto oficial da NASA.</p>
+  <button class="reset-btn" id="reset-btn">Reiniciar Progresso Salvo</button>
+</footer>
+<div id="toast" role="status"></div>
+
+<script>
+let state={gears:0,totalGearsEarned:0,clickPower:1,globalMultiplier:1,currentPlanet:'lua',marsUnlocked:false,activeStoryId:null,gearAngle:0,manualBoost:0,overdriveTime:0,overdriveCount:0};
+const PRICE_GROWTH=1.15,MARS_COST=350000;
+const E=(id,name,icon,planet,baseCost,baseGps,desc,title,text,reward,question,options,correctIndex)=>({id,name,icon,planet,baseCost,baseGps,owned:0,desc,story:{title,text,reward,quizCompleted:false,question,options,correctIndex}});
+const equipments=[
+E('surveyor','Sondas Surveyor','🛬','lua',15,0.4,'Sondas robóticas dos anos 1960 que provaram que o pouso suave na Lua era possível.','Capítulo 1: Provando que a Lua Aguenta o Peso (1966–1968)','Entre 1966 e 1968, a NASA lançou sete sondas Surveyor. Cinco delas pousaram com sucesso, enviando milhares de fotos e analisando o solo.\n\nO resultado foi tranquilizador: a superfície lunar era firme o bastante para sustentar um módulo com astronautas, abrindo caminho para a Apollo.',30,'O que as Surveyors provaram antes da Apollo?',['Que pousos suaves eram possíveis e o solo suportava um módulo','Que havia água líquida na Lua','Que a Lua era oca por dentro'],0),
+E('apollolm','Módulos Lunares Apollo','🦅','lua',120,1.7,'Os estágios de descida, como o do Eagle (Apollo 11), foram deixados na Lua como plataforma de lançamento.','Capítulo 2: Um Pequeno Passo e uma Base Deixada para Trás (1969)','Em 20 de julho de 1969, Neil Armstrong e Buzz Aldrin pousaram o Módulo Lunar Eagle no Mar da Tranquilidade.\n\nO módulo tinha dois estágios: o de descida serviu de plataforma de lançamento e ficou na Lua, enquanto o de subida levou os astronautas de volta à órbita. O mesmo vale para os outros módulos lunares das missões Apollo.',240,'O que aconteceu com o estágio de descida do Eagle?',['Voltou à Terra com os astronautas','Foi deixado na Lua como plataforma de lançamento','Foi lançado em direção ao Sol'],1),
+E('alsep','Pacotes Científicos ALSEP','📡','lua',960,9.6,'Experimentos deixados na Lua para fazer ciência depois que os astronautas partiram.','Capítulo 3: Ciência que Ficou na Lua (1969–1977)','Os pacotes ALSEP (Apollo Lunar Surface Experiments Packages) foram instalados pelos astronautas e continuaram trabalhando depois que eles foram embora.\n\nCom sismômetros, refletores e outros instrumentos, enviaram dados à Terra até serem desligados, em 1977. Os refletores de laser deixados na Lua seguem úteis para medir a distância Terra–Lua.',1900,'Qual era a função dos pacotes ALSEP?',['Fazer ciência na Lua depois da partida dos astronautas','Transportar astronautas pela superfície','Lançar foguetes de volta à Terra'],0),
+E('lrv','Jipes Lunares (LRV)','🚙','lua',7700,59,'Três jipes elétricos dirigidos pelos astronautas e estacionados para sempre na Lua.','Capítulo 4: Dirigindo Além do Horizonte Lunar (1971–1972)','O Lunar Roving Vehicle (LRV) foi um jipe elétrico usado nas missões Apollo 15, 16 e 17. Um foi levado em cada missão, no total de três.\n\nCom eles, os astronautas se afastaram dezenas de quilômetros do módulo lunar para coletar amostras. Ao fim das missões, os três jipes foram estacionados permanentemente na superfície.',15000,'Quantos jipes lunares (LRV) foram levados à Lua?',['Um','Três','Doze'],1),
+E('viking','Pousadores Viking 1 e 2','🛸','marte',61000,380,'Os primeiros pousadores dos EUA a operar em Marte (1976). Seguem onde pousaram.','Capítulo 5: A Busca por Vida em Marte (1976)','Em 1976, os Viking 1 e 2 se tornaram os primeiros pousadores dos Estados Unidos a operar com sucesso em Marte.\n\nEles fotografaram a paisagem e fizeram experimentos de biologia em busca de vida microbiana. Ambos permanecem exatamente onde tocaram o solo.',120000,'Em que ano os pousadores Viking chegaram a Marte?',['1976','1969','1997'],0),
+E('sojourner','Rover Sojourner','🤖','marte',490000,2580,'O primeiro rover em Marte (1997), levado pelo Pathfinder. Hoje está estacionado para sempre.','Capítulo 6: Primeiras Rodas em Marte (1997)','Em 4 de julho de 1997, a sonda Mars Pathfinder pousou em Marte amortecida por airbags e liberou o Sojourner, um rover do tamanho de um forno de micro-ondas.\n\nProjetado para durar apenas 7 dias marcianos, ele operou por quase 3 meses, analisando rochas. Hoje está parado permanentemente.',980000,'Quanto tempo o Sojourner foi projetado para operar?',['15 anos','7 dias marcianos','1 hora'],1),
+E('spiritopp','Spirit e Opportunity','🛞','marte',3900000,17700,'Rovers gêmeos que operaram por anos. Hoje são monumentos inativos à exploração de Marte.','Capítulo 7: Os Gêmeos Incansáveis (2004–2018)','Spirit e Opportunity pousaram em janeiro de 2004 para missões planejadas de 90 dias marcianos. O Spirit operou até 2010 e o Opportunity até 2018, quando uma tempestade de poeira o deixou sem energia.\n\nSuas descobertas mostraram que Marte já teve água em seu passado. Hoje ambos estão inativos.',7800000,'Qual era a duração planejada da missão dos rovers gêmeos?',['14 anos','1 ano terrestre','90 dias marcianos'],2),
+E('phoenixinsight','Phoenix e InSight','🧊','marte',31000000,124000,'O Phoenix cavou gelo de água; o InSight escutou terremotos marcianos. Ambos perderam energia.','Capítulo 8: Gelo e Terremotos em Marte (2008–2022)','O Phoenix pousou perto do polo norte de Marte em 2008 e cavou o solo para analisar gelo de água. O InSight, de 2018, instalou um sismômetro e ouviu terremotos marcianos.\n\nOs dois acabaram perdendo energia: o Phoenix com a chegada do inverno e o InSight quando a poeira cobriu seus painéis solares.',62000000,'O que o InSight escutou em Marte?',['Sinais de rádio de outra civilização','Marsquakes (terremotos marcianos)','Tempestades de gelo'],1)
+];
+const TAGS=['Função','História','Abandono'],KU=[7,25,85],MU=[2,2,3];
+const UP=[
+['surveyor',0,'Câmeras de TV de alta resolução','As Surveyors enviaram milhares de fotos da superfície lunar.'],
+['surveyor',1,'Cinco pousos em sete tentativas','A experiência de 1966–68 provou que o pouso suave funcionava.'],
+['surveyor',2,'Sondas silenciadas','Hoje estão silenciosas na Lua, mas seus dados abriram o caminho.'],
+['apollolm',0,'Motor de descida controlável','Permitiu ao Eagle ajustar o pouso mesmo com pouco combustível.'],
+['apollolm',1,'Mar da Tranquilidade','O pouso de 1969 inspira novas equipes de engenharia.'],
+['apollolm',2,'Plataforma de lançamento reaproveitada','O estágio de descida ficou na Lua como base do lançamento.'],
+['alsep',0,'Sismômetros e refletores','Instrumentos que seguiram medindo depois da partida dos astronautas.'],
+['alsep',1,'Cinco estações Apollo','Pacotes instalados em várias missões ampliam os dados.'],
+['alsep',2,'Desligamento em 1977','Os pacotes foram abandonados, mas seus dados seguem em arquivo.'],
+['lrv',0,'Baterias de prata-zinco','Mais energia para percorrer dezenas de quilômetros.'],
+['lrv',1,'Apollo 15, 16 e 17','Três jipes ampliaram a exploração geológica da Lua.'],
+['lrv',2,'Estacionados para sempre','Os jipes ficaram parados na Lua, como marcos da exploração.'],
+['viking',0,'Experimentos de biologia','Testes em busca de vida microbiana no solo marciano.'],
+['viking',1,'Chryse e Utopia','Os pousos de 1976 abriram a era dos pousadores em Marte.'],
+['viking',2,'Onde pousaram','Os pousadores ficaram exatamente onde tocaram o solo.'],
+['sojourner',0,'Espectrômetro APXS','Analisa a composição das rochas marcianas.'],
+['sojourner',1,'Mars Pathfinder','O pouso com airbags de 1997 inspirou missões futuras.'],
+['sojourner',2,'Estacionado para sempre','O pequeno rover ficou parado ao lado do Pathfinder.'],
+['spiritopp',0,'Braço robótico e painéis solares','Mais análises de rochas e energia para viajar longe.'],
+['spiritopp',1,'Missão de 90 sóis que durou anos','Os gêmeos superaram o planejado por muito tempo.'],
+['spiritopp',2,'Monumentos inativos','Ambos pararam de operar e hoje são monumentos em Marte.'],
+['phoenixinsight',0,'Pá para gelo e sismômetro','Cavar gelo e escutar marsquakes.'],
+['phoenixinsight',1,'Gelo de água e marsquakes','Descobertas sobre o gelo e o interior de Marte.'],
+['phoenixinsight',2,'Sem energia','Ambos perderam energia, mas seus dados continuam.']
+];
+const upgrades=[...UP.map(([eq,t,name,desc],i)=>({id:'u'+i,eq,tag:TAGS[t],name,desc:desc+' (×'+MU[t]+' neste equipamento)',cost:Math.round(equipments.find(e=>e.id===eq).baseCost*KU[t]),mult:MU[t],bought:false})),
+...[['Treinamento no Controle de Missão','Operadores treinados dobram o ganho por clique.',500,2],['Antenas da Rede do Espaço Profundo','Comunicação melhor dobra o ganho por clique.',20000,2],['Computador de Orientação Apollo','Cálculos mais rápidos dobram o ganho por clique.',2000000,2],['Rede de comunicação interplanetária','Triplica o ganho por clique.',200000000,3]].map(([name,desc,cost,mult],i)=>({id:'c'+i,click:true,tag:'Controle',name,desc,cost,mult,bought:false}))];
+const allQuiz=pl=>equipments.filter(e=>!pl||e.planet===pl).every(e=>e.story.quizCompleted);
+const achievements=[
+{id:'a1',title:'Primeiro Passo',desc:'Compre seu primeiro equipamento espacial.',check:()=>equipments.some(e=>e.owned>=1)},
+{id:'a_eng',title:'Engenheiro de Sobrecarga',desc:'Ative o modo Turbo 2x do Motor de Engrenagens pela primeira vez.',check:()=>state.overdriveCount>=1},
+{id:'a2',title:'Historiador Cósmico',desc:'Complete seu primeiro questionário na aba História.',check:()=>equipments.some(e=>e.story.quizCompleted)},
+{id:'a_lua',title:'Mestre da Lua',desc:'Complete todos os questionários da fase lunar.',check:()=>allQuiz('lua')},
+{id:'a3',title:'Explorador de Dois Mundos',desc:'Inicie a fase de Marte e instale um equipamento lá.',check:()=>state.marsUnlocked&&equipments.some(e=>e.planet==='marte'&&e.owned>=1)},
+{id:'a_ab',title:'Guardião de Monumentos',desc:'Instale 3 melhorias de Abandono.',check:()=>upgrades.filter(u=>u.bought&&u.tag==='Abandono').length>=3},
+{id:'a4',title:'Mestre da Exploração',desc:'Complete todos os questionários históricos do arquivo.',check:()=>allQuiz()},
+{id:'a_up',title:'Legado Completo',desc:'Instale todas as melhorias.',check:()=>upgrades.every(u=>u.bought)}
+];
+let unlockedAch=[];
+const PLANETS={lua:{t:'Superfície lunar',d:'Terreno lunar. Compre equipamentos para instalá-los aqui.'},marte:{t:'Planeta Vermelho',d:'Terreno marciano. Compre equipamentos para instalá-los aqui.'}};
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function saveGame(){
+  try{localStorage.setItem('legado_espacial_v3',JSON.stringify({gears:state.gears,totalGearsEarned:state.totalGearsEarned,overdriveCount:state.overdriveCount,marsUnlocked:state.marsUnlocked,ach:unlockedAch,
+    equipments:equipments.map(e=>({id:e.id,owned:e.owned,quizCompleted:e.story.quizCompleted})),upgrades:upgrades.map(u=>({id:u.id,bought:u.bought}))}))}catch(e){}
+}
+function loadGame(){
+  let raw=null;try{raw=localStorage.getItem('legado_espacial_v3')}catch(e){}
+  if(!raw)return;
+  try{
+    const d=JSON.parse(raw);
+    state.gears=d.gears||0;state.totalGearsEarned=d.totalGearsEarned||0;state.overdriveCount=d.overdriveCount||0;state.marsUnlocked=!!d.marsUnlocked;unlockedAch=d.ach||[];
+    (d.equipments||[]).forEach(x=>{const t=equipments.find(e=>e.id===x.id);if(t){t.owned=x.owned||0;t.story.quizCompleted=!!x.quizCompleted}});
+    (d.upgrades||[]).forEach(x=>{const t=upgrades.find(u=>u.id===x.id);if(t)t.bought=!!x.bought});
+  }catch(e){}
+  recompute();
+}
+let resetArmed=false;
+$('reset-btn').addEventListener('click',()=>{
+  const b=$('reset-btn');
+  if(!resetArmed){resetArmed=true;b.textContent='Clique de novo para apagar tudo';setTimeout(()=>{resetArmed=false;b.textContent='Reiniciar Progresso Salvo'},4000);return}
+  try{localStorage.removeItem('legado_espacial_v3')}catch(e){}
+  Object.assign(state,{marsUnlocked:false,currentPlanet:'lua',gears:0,totalGearsEarned:0,clickPower:1,globalMultiplier:1,activeStoryId:null,manualBoost:0,overdriveTime:0,overdriveCount:0});
+  equipments.forEach(e=>{e.owned=0;e.story.quizCompleted=false});upgrades.forEach(u=>u.bought=false);recompute();unlockedAch=[];
+  resetArmed=false;b.textContent='Reiniciar Progresso Salvo';updateUI();
+});
+
+const getCost=eq=>Math.floor(eq.baseCost*Math.pow(PRICE_GROWTH,eq.owned));
+const odMult=()=>state.overdriveTime>0?2:1;
+const eqMult=eq=>upgrades.filter(u=>u.bought&&u.eq===eq.id).reduce((p,u)=>p*u.mult,1);
+const recompute=()=>{state.clickPower=upgrades.filter(u=>u.bought&&u.click).reduce((p,u)=>p*u.mult,1)};
+const fmtG=n=>n<10?(Math.round(n*10)/10).toLocaleString('pt-BR'):Math.floor(n).toLocaleString('pt-BR');
+const lunarDone=()=>equipments.filter(e=>e.planet==='lua').every(e=>e.owned>0);
+const NASA='<svg viewBox="0 0 100 100" width="26" height="26" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#0b3d91"/><g fill="#fff"><circle cx="20" cy="30" r="1.6"/><circle cx="36" cy="12" r="1.2"/><circle cx="76" cy="20" r="1.5"/><circle cx="86" cy="44" r="1.2"/><circle cx="14" cy="54" r="1.2"/></g><ellipse cx="50" cy="50" rx="47" ry="14" transform="rotate(-28 50 50)" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M10 78C30 74 46 56 56 34 60 52 72 64 90 66 68 68 54 76 48 90 46 78 30 76 10 78Z" fill="#fc3d21"/><text x="50" y="58" text-anchor="middle" font-size="21" font-weight="700" font-style="italic" fill="#fff" font-family="Arial,sans-serif">NASA</text></svg>';
+const baseGps=()=>equipments.reduce((s,e)=>s+e.owned*e.baseGps*eqMult(e),0)*state.globalMultiplier;
+const getTotalGps=()=>baseGps()*odMult();
+const formatNum=n=>Math.floor(n).toLocaleString('pt-BR');
+let toastT;
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),2400)}
+
+$('manual-click-btn').addEventListener('click',()=>{
+  const gain=state.clickPower*odMult();
+  state.gears+=gain;state.totalGearsEarned+=gain;state.gearAngle+=18;
+  if(state.overdriveTime<=0){
+    state.manualBoost=Math.min(100,state.manualBoost+8);
+    if(state.manualBoost>=100){state.overdriveTime=10;state.overdriveCount++}
+  }
+  updateUI();
+});
+function buyEquipment(id){
+  const eq=equipments.find(e=>e.id===id),c=getCost(eq);
+  if(state.gears>=c){state.gears-=c;eq.owned++;if(eq.owned===1)toast('Missão liberada na aba História!');saveGame();updateUI()}
+}
+function buyUpgrade(id){
+  const up=upgrades.find(u=>u.id===id);
+  if(!up.bought&&state.gears>=up.cost){state.gears-=up.cost;up.bought=true;recompute();saveGame();updateUI()}
+}
+function unlockMars(){
+  if(state.gears>=MARS_COST&&!state.marsUnlocked){state.gears-=MARS_COST;state.marsUnlocked=true;state.currentPlanet='marte';toast('Fase Marte iniciada!');saveGame();updateUI()}
+}
+
+function renderResearch(){
+  const p=state.currentPlanet;
+  let h=equipments.filter(e=>e.planet===p).map(eq=>`<div class="card"><div><div class="card-top"><span class="card-title">${eq.icon} ${esc(eq.name)}</span><span class="badge">×${eq.owned}</span></div>
+  <p class="card-desc">${esc(eq.desc)}</p><p class="card-meta">+${fmtG(eq.baseGps*eqMult(eq))} ⚙/s cada</p></div>
+  <button class="buy-btn" data-buy="${eq.id}">Comprar — ${formatNum(getCost(eq))} ⚙</button></div>`).join('');
+  if(p==='lua'&&!state.marsUnlocked)h+=`<div class="card"><div><div class="card-top"><span class="card-title">🔴 Programa Marte</span></div><p class="card-desc">Segunda fase do jogo. Libera os robôs de Marte.</p></div><button class="buy-btn" data-mars>Iniciar fase Marte — ${formatNum(MARS_COST)} ⚙</button></div>`;
+  $('research-grid').innerHTML=h;
+}
+function renderTerrain(){
+  const p=state.currentPlanet;
+  document.querySelectorAll('.planet-btn').forEach(b=>b.classList.toggle('active',b.dataset.planet===p));
+  $('terrain-box').className='terrain-box '+p;
+  $('terrain-title').textContent=PLANETS[p].t;$('terrain-desc').textContent=PLANETS[p].d;
+  const items=equipments.filter(e=>e.planet===p&&e.owned>0).map(e=>`<span class="terrain-item">${e.icon} ${esc(e.name)} ×${e.owned}</span>`);
+  $('terrain-items').innerHTML=items.join('')||'<span class="empty">Nenhum equipamento instalado aqui ainda.</span>';
+}
+function renderStory(){
+  const box=$('story-body');
+  if(state.activeStoryId){
+    const eq=equipments.find(e=>e.id===state.activeStoryId),s=eq.story;
+    box.innerHTML=`<button class="back-btn" id="story-back">← Voltar às missões</button><div class="story-reader"><h3>${esc(s.title)}</h3><p class="story-text">${esc(s.text)}</p>
+    <div class="quiz-box"><h4>Questionário${s.quizCompleted?' (concluído)':' — recompensa: '+formatNum(s.reward)+' ⚙'}</h4><p>${esc(s.question)}</p>
+    <div class="quiz-options">${s.options.map((o,i)=>`<button class="quiz-opt ${s.quizCompleted&&i===s.correctIndex?'correct':''}" data-opt="${i}" ${s.quizCompleted?'disabled':''}>${esc(o)}</button>`).join('')}</div><div class="quiz-msg" id="quiz-msg"></div></div></div>`;
+    return;
+  }
+  const open=equipments.filter(e=>e.owned>0);
+  box.innerHTML=open.length?'<div class="grid">'+open.map(e=>`<div class="card"><div class="card-top"><span class="card-title">${e.icon} ${esc(e.story.title)}</span>${e.story.quizCompleted?'<span class="badge">✓</span>':''}</div><button class="buy-btn" data-story="${e.id}">Ler capítulo</button></div>`).join('')+'</div>'
+    :'<p class="empty">Nenhuma missão liberada. Compre um equipamento na aba Pesquisa.</p>';
+}
+function renderUpgrades(){
+  const vis=upgrades.filter(u=>u.click||equipments.find(e=>e.id===u.eq).owned>0);
+  $('upgrades-grid').innerHTML=vis.map(u=>`<div class="card ${u.bought?'bought':''}"><div><div class="card-top"><span class="card-title">⚡ ${esc(u.name)}</span><span class="badge">${u.tag}</span></div><p class="card-desc">${esc(u.desc)}</p></div>
+  <button class="buy-btn" data-up="${u.id}" ${u.bought?'disabled':''}>${u.bought?'Instalada':'Instalar — '+formatNum(u.cost)+' ⚙'}</button></div>`).join('')+(vis.length<upgrades.length?'<p class="empty">Compre mais equipamentos para liberar novas melhorias.</p>':'');
+}
+function renderAch(){
+  $('ach-grid').innerHTML=achievements.map(a=>{const ok=unlockedAch.includes(a.id);return `<div class="card ${ok?'unlocked':''}"><div class="card-top"><span class="card-title">${ok?'🏆':'🔒'} ${esc(a.title)}</span></div><p class="card-desc">${esc(a.desc)}</p></div>`}).join('');
+}
+function checkAch(){
+  let ch=false;achievements.forEach(a=>{if(!unlockedAch.includes(a.id)&&a.check()){unlockedAch.push(a.id);toast('🏆 Conquista: '+a.title);ch=true}});
+  if(ch)saveGame();
+}
+function updateUI(){
+  document.querySelectorAll('.planet-btn').forEach(b=>{b.classList.toggle('active',b.dataset.planet===state.currentPlanet);if(b.dataset.planet==='marte')b.textContent=state.marsUnlocked?'🔴 Marte':'🔴 Marte 🔒'});
+  checkAch();
+  const tab=document.querySelector('.section.active').id;
+  if(tab==='research')renderResearch();
+  else if(tab==='terrain')renderTerrain();
+  else if(tab==='story')renderStory();
+  else if(tab==='upgrades')renderUpgrades();
+  else renderAch();
+  lightUpdate();
+}
+function lightUpdate(){
+  document.querySelectorAll('[data-mars]').forEach(b=>{b.disabled=state.gears<MARS_COST});
+  $('gears').textContent=formatNum(state.gears);
+  $('gps').textContent=formatNum(getTotalGps())+'/s';
+  $('manual-click-btn').innerHTML=NASA+`<span>Acionar Motor (+${formatNum(state.clickPower*odMult())})</span>`;
+  document.querySelectorAll('[data-buy]').forEach(b=>{b.disabled=state.gears<getCost(equipments.find(e=>e.id===b.dataset.buy))});
+  document.querySelectorAll('[data-up]').forEach(b=>{const u=upgrades.find(x=>x.id===b.dataset.up);b.disabled=u.bought||state.gears<u.cost});
+}
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');$(btn.dataset.tab).classList.add('active');
+  if(btn.dataset.tab==='story')state.activeStoryId=null;
+  updateUI();
+}));
+document.querySelectorAll('.planet-btn').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.planet==='marte'&&!state.marsUnlocked){toast('Inicie a fase Marte na aba Pesquisa.');return}state.currentPlanet=b.dataset.planet;updateUI()}));
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.mars)unlockMars();
+  else if(t.dataset.buy)buyEquipment(t.dataset.buy);
+  else if(t.dataset.up)buyUpgrade(t.dataset.up);
+  else if(t.dataset.story){state.activeStoryId=t.dataset.story;renderStory()}
+  else if(t.id==='story-back'){state.activeStoryId=null;renderStory()}
+  else if(t.classList.contains('quiz-opt')&&!t.disabled){
+    const s=equipments.find(x=>x.id===state.activeStoryId).story,i=+t.dataset.opt;
+    if(i===s.correctIndex){
+      s.quizCompleted=true;state.gears+=s.reward;state.totalGearsEarned+=s.reward;
+      document.querySelectorAll('.quiz-opt').forEach(o=>o.disabled=true);t.classList.add('correct');
+      $('quiz-msg').textContent=`Correto! +${formatNum(s.reward)} ⚙`;saveGame();checkAch();lightUpdate();
+    }else{t.classList.add('wrong');t.disabled=true;$('quiz-msg').style.color='var(--red)';$('quiz-msg').textContent='Não foi dessa vez. Tente outra opção.'}
+  }
+});
+
+let last=performance.now(),saveT=0,uiT=0;
+function loop(t){
+  const dt=Math.min(.25,(t-last)/1000);last=t;
+  const g=getTotalGps()*dt;state.gears+=g;state.totalGearsEarned+=g;
+  if(state.overdriveTime>0){state.overdriveTime-=dt;state.manualBoost=Math.max(0,state.overdriveTime*10);if(state.overdriveTime<=0){state.overdriveTime=0;state.manualBoost=0;updateUI()}}
+  else state.manualBoost=Math.max(0,state.manualBoost-dt*12);
+  const od=state.overdriveTime>0;
+  const rpm=Math.round(state.manualBoost*30+Math.min(baseGps(),500)*4);
+  state.gearAngle+=(rpm/60)*360*dt*.2;
+  $('gear-main').style.transform=`rotate(${state.gearAngle}deg)`;
+  $('gear-sec').style.transform=`rotate(${-state.gearAngle*1.46}deg)`;
+  $('gear-ter').style.transform=`rotate(${-state.gearAngle*1.9}deg)`;
+  $('engine-panel').classList.toggle('overdrive',od);
+  $('rpm-fill').style.width=Math.min(100,state.manualBoost)+'%';
+  $('rpm-text').textContent=od?`${formatNum(rpm*2)} RPM · TURBO 2x (${Math.ceil(state.overdriveTime)}s)`:rpm>0?`${formatNum(rpm)} RPM`:'0 RPM (Parado)';
+  uiT+=dt;if(uiT>.25){uiT=0;lightUpdate();checkAch()}
+  saveT+=dt;if(saveT>5){saveT=0;saveGame()}
+  requestAnimationFrame(loop);
+}
+loadGame();if(!state.marsUnlocked)state.currentPlanet='lua';updateUI();renderTerrain();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
