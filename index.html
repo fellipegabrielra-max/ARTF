@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Space Legacy — From the Moon to Mars</title>
+<style>
+:root{--bg:#0b0f19;--card:#151c2c;--card-hover:#1d263b;--accent:#38bdf8;--gold:#facc15;--green:#4ade80;--red:#f87171;--orange:#fb923c;--text:#f1f5f9;--muted:#94a3b8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+body{background:var(--bg);color:var(--text);line-height:1.6;padding-bottom:50px}
+header{background:linear-gradient(180deg,#111827 0%,var(--bg) 100%);padding:20px 16px;text-align:center;border-bottom:1px solid #1e293b}
+header h1{font-size:2rem;letter-spacing:1px;color:var(--accent)}
+header p{color:var(--muted);font-size:.95rem;margin-top:4px}
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:100;background:rgba(15,23,42,.96);backdrop-filter:blur(8px);border-bottom:1px solid #1e293b;padding:12px 20px;display:flex;justify-content:center;align-items:center;gap:22px;flex-wrap:wrap}
+.engine-panel{display:flex;align-items:center;gap:14px;background:#0f172a;border:1px solid #334155;padding:8px 14px;border-radius:12px;transition:border-color .3s,box-shadow .3s}
+.engine-panel.overdrive{border-color:var(--orange);box-shadow:0 0 18px rgba(251,146,60,.45)}
+.gear-box{position:relative;width:66px;height:52px}
+.gear-svg{position:absolute;transform-origin:center}
+#gear-main{width:38px;height:38px;top:2px;left:2px;fill:var(--gold)}
+#gear-sec{width:26px;height:26px;top:22px;left:34px;fill:var(--accent)}
+#gear-ter{width:20px;height:20px;top:2px;left:40px;fill:#94a3b8}
+.engine-panel.overdrive #gear-main{fill:var(--orange)}
+.engine-info{display:flex;flex-direction:column;min-width:150px}
+.engine-title{font-size:.72rem;text-transform:uppercase;color:var(--muted);letter-spacing:.8px}
+.engine-rpm{font-size:.85rem;font-weight:bold;color:var(--accent)}
+.engine-panel.overdrive .engine-rpm{color:var(--orange)}
+.rpm-bar-bg{width:100%;height:6px;background:#1e293b;border-radius:4px;overflow:hidden;margin-top:4px}
+.rpm-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .15s ease-out}
+.engine-panel.overdrive .rpm-bar-fill{background:linear-gradient(90deg,var(--gold),var(--orange))}
+.stat{text-align:center}
+.stat-label{font-size:.75rem;text-transform:uppercase;color:var(--muted);letter-spacing:1px}
+.stat-value{font-size:1.5rem;font-weight:bold;color:var(--gold)}
+.story-text{line-height:1.75}#nasa-logo{display:flex}.click-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2563eb,#38bdf8);border:none;color:#fff;font-size:1.1rem;font-weight:bold;padding:12px 22px;border-radius:50px;cursor:pointer;box-shadow:0 0 15px rgba(56,189,248,.4);transition:transform .08s;user-select:none}
+.click-btn:active{transform:scale(.93)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+nav{display:flex;justify-content:center;gap:8px;padding:16px;flex-wrap:wrap}
+.tab-btn{background:var(--card);color:var(--text);border:1px solid #1e293b;padding:10px 18px;border-radius:8px;cursor:pointer;font-weight:600;transition:.2s}
+.tab-btn.active{background:var(--accent);color:#0b0f19;border-color:var(--accent)}
+.tab-btn:hover:not(.active){background:var(--card-hover)}
+main{max-width:900px;margin:0 auto;padding:0 16px}
+.section{display:none}.section.active{display:block}
+.section-header{margin-bottom:16px}
+.section-header h2{font-size:1.4rem;color:var(--accent)}
+.section-header p{color:var(--muted);font-size:.9rem;max-width:70ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid #1e293b;border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;transition:.2s}
+.card:hover{border-color:#334155}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+.card-title{font-weight:bold;font-size:1.05rem}
+.badge{background:#1e293b;color:var(--accent);padding:2px 8px;border-radius:12px;font-size:.8rem;font-weight:bold;white-space:nowrap}
+.card-desc{font-size:.85rem;color:var(--muted);margin-bottom:12px}
+.card-meta{font-size:.85rem;color:var(--green);margin-bottom:12px}
+.buy-btn{width:100%;padding:10px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;background:var(--gold);color:#0b0f19;transition:.2s}
+.buy-btn:disabled{background:#334155;color:#64748b;cursor:not-allowed}
+.planet-tabs{display:flex;gap:8px;margin-bottom:12px}
+.planet-btn{background:var(--card);color:var(--text);border:1px solid #334155;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600}
+.planet-btn.active{border-color:var(--gold);color:var(--gold)}
+.terrain-box{background:radial-gradient(circle at top,#1e293b,#0f172a);border:1px solid #334155;border-radius:12px;padding:20px;min-height:220px}
+.terrain-box.marte{background:radial-gradient(circle at top,#4a2318,#1a0f0c);border-color:#7c3a28}
+.terrain-box p{color:var(--muted);font-size:.9rem}
+.terrain-items{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+.terrain-item{background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);padding:8px 14px;border-radius:8px;font-size:.9rem}
+.story-reader{background:var(--card);border:1px solid #1e293b;border-radius:12px;padding:24px}
+.story-text{margin:16px 0;font-size:1rem;color:#e2e8f0;white-space:pre-line;max-width:70ch}
+.quiz-box{margin-top:24px;padding-top:20px;border-top:1px dashed #334155}
+.quiz-box h4{color:var(--gold);margin-bottom:10px}
+.quiz-options{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.quiz-opt{background:#1e293b;color:var(--text);border:1px solid #334155;padding:10px 14px;border-radius:8px;text-align:left;cursor:pointer;transition:.2s}
+.quiz-opt:hover:not(:disabled){background:#283548;border-color:var(--accent)}
+.quiz-opt.correct{background:rgba(74,222,128,.2);border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong{background:rgba(248,113,113,.2);border-color:var(--red);color:var(--red)}
+.quiz-msg{margin-top:10px;font-weight:bold;color:var(--green)}
+.back-btn{background:transparent;border:1px solid #334155;color:var(--muted);padding:6px 12px;border-radius:6px;cursor:pointer;margin-bottom:12px}
+.back-btn:hover{color:var(--text);border-color:var(--text)}
+.card.unlocked{border-color:var(--gold);background:rgba(250,204,21,.08)}
+.card.bought{opacity:.7;border-color:var(--green)}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:40px;padding:0 16px}
+.reset-btn{background:transparent;border:1px solid #334155;color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;margin-top:8px}
+.reset-btn:hover{color:var(--red);border-color:var(--red)}
+.empty{color:var(--muted);font-size:.9rem}
+#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--gold);color:#0b0f19;padding:10px 18px;border-radius:10px;font-weight:bold;opacity:0;pointer-events:none;transition:opacity .3s;z-index:200;text-align:center}
+#toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🚀 SPACE LEGACY</h1>
+  <p>From the Moon to Mars: the story of human exploration</p>
+</header>
+
+<div class="hud">
+  <div class="engine-panel" id="engine-panel" title="Click repeatedly to fill the gauge and activate 2x Turbo!">
+    <div class="gear-box">
+      <svg id="gear-main" class="gear-svg" viewBox="0 0 100 100"><path d="M94 56V44l-11.2-2.2c-.8-3.2-2-6.2-3.6-9l6.5-9.4-8.5-8.5-9.4 6.5c-2.8-1.6-5.8-2.8-9-3.6L56 6H44l-2.2 11.2c-3.2.8-6.2 2-9 3.6l-9.4-6.5-8.5 8.5 6.5 9.4c-1.6 2.8-2.8 5.8-3.6 9L6 44v12l11.2 2.2c.8 3.2 2 6.2 3.6 9l-6.5 9.4 8.5 8.5 9.4-6.5c2.8 1.6 5.8 2.8 9 3.6L44 94h12l2.2-11.2c3.2-.8 6.2-2 9-3.6l9.4 6.5 8.5-8.5-6.5-9.4c1.6-2.8 2.8-5.8 3.6-9L94 56zM50 68c-9.9 0-18-8.1-18-18s8.1-18 18-18 18 8.1 18 18-8.1 18-18 18z"/></svg>
+      <svg id="gear-sec" class="gear-svg" viewBox="0 0 100 100"><path d="M94 56V44l-11.2-2.2c-.8-3.2-2-6.2-3.6-9l6.5-9.4-8.5-8.5-9.4 6.5c-2.8-1.6-5.8-2.8-9-3.6L56 6H44l-2.2 11.2c-3.2.8-6.2 2-9 3.6l-9.4-6.5-8.5 8.5 6.5 9.4c-1.6 2.8-2.8 5.8-3.6 9L6 44v12l11.2 2.2c.8 3.2 2 6.2 3.6 9l-6.5 9.4 8.5 8.5 9.4-6.5c2.8 1.6 5.8 2.8 9 3.6L44 94h12l2.2-11.2c3.2-.8 6.2-2 9-3.6l9.4 6.5 8.5-8.5-6.5-9.4c1.6-2.8 2.8-5.8 3.6-9L94 56zM50 66c-8.8 0-16-7.2-16-16s7.2-16 16-16 16 7.2 16 16-7.2 16-16 16z"/></svg>
+      <svg id="gear-ter" class="gear-svg" viewBox="0 0 100 100"><path d="M94 56V44l-11.2-2.2c-.8-3.2-2-6.2-3.6-9l6.5-9.4-8.5-8.5-9.4 6.5c-2.8-1.6-5.8-2.8-9-3.6L56 6H44l-2.2 11.2c-3.2.8-6.2 2-9 3.6l-9.4-6.5-8.5 8.5 6.5 9.4c-1.6 2.8-2.8 5.8-3.6 9L6 44v12l11.2 2.2c.8 3.2 2 6.2 3.6 9l-6.5 9.4 8.5 8.5 9.4-6.5c2.8 1.6 5.8 2.8 9 3.6L44 94h12l2.2-11.2c3.2-.8 6.2-2 9-3.6l9.4 6.5 8.5-8.5-6.5-9.4c1.6-2.8 2.8-5.8 3.6-9L94 56zM50 64c-7.7 0-14-6.3-14-14s6.3-14 14-14 14 6.3 14 14-6.3 14-14 14z"/></svg>
+    </div>
+    <div class="engine-info">
+      <span class="engine-title">Gear Engine</span>
+      <span class="engine-rpm" id="rpm-text">0 RPM (Idle)</span>
+      <div class="rpm-bar-bg"><div class="rpm-bar-fill" id="rpm-fill"></div></div>
+    </div>
+  </div>
+  <div class="stat"><div class="stat-label">Gears</div><div class="stat-value"><span id="gears">0</span> ⚙</div></div>
+  <div class="stat"><div class="stat-label">Output</div><div class="stat-value" id="gps">0/s</div></div>
+  <button class="click-btn" id="manual-click-btn"><span id="nasa-logo"></span><span id="click-label"></span></button>
+</div>
+
+<nav>
+  <button class="tab-btn active" data-tab="research">🔬 Research</button>
+  <button class="tab-btn" data-tab="terrain">🌕 Terrain</button>
+  <button class="tab-btn" data-tab="story">📖 Story</button>
+  <button class="tab-btn" data-tab="upgrades">⚡ Upgrades</button>
+  <button class="tab-btn" data-tab="achievements">🏆 Achievements</button>
+</nav>
+
+<main>
+  <section class="section active" id="research">
+    <div class="section-header"><h2>Research center</h2><p>Buy historic equipment to power the engine automatically. The cost rises 15% with each unit installed.</p></div>
+    <div class="planet-tabs"><button class="planet-btn active" data-planet="lua">🌕 Moon</button><button class="planet-btn" data-planet="marte">🔴 Mars 🔒</button></div>
+    <div class="grid" id="research-grid"></div>
+  </section>
+  <section class="section" id="terrain">
+    <div class="section-header"><h2>Exploration terrain</h2><p>This area shows the environment and the equipment you have already bought. The stories are in the Story tab.</p></div>
+    <div class="planet-tabs">
+      <button class="planet-btn active" data-planet="lua">🌕 Moon</button>
+      <button class="planet-btn" data-planet="marte">🔴 Mars</button>
+    </div>
+    <div class="terrain-box" id="terrain-box">
+      <h3 id="terrain-title"></h3><p id="terrain-desc"></p>
+      <div class="terrain-items" id="terrain-items"></div>
+    </div>
+  </section>
+  <section class="section" id="story">
+    <div class="section-header"><h2>Mission history archive</h2><p>Your first purchase of a piece of equipment unlocks its mission. Read the chapter and answer the quiz to earn rewards!</p></div>
+    <div id="story-body"></div>
+  </section>
+  <section class="section" id="upgrades">
+    <div class="section-header"><h2>Technology upgrades</h2><p>Upgrades increase the efficiency of the gear engine and of all equipment.</p></div>
+    <div class="grid" id="upgrades-grid"></div>
+  </section>
+  <section class="section" id="achievements">
+    <div class="section-header"><h2>Achievements</h2><p>Historic milestones reached during your space journey.</p></div>
+    <div class="grid" id="ach-grid"></div>
+  </section>
+</main>
+
+<footer>
+  <p>Space Legacy — an independent educational project. Not an official NASA product.</p>
+  <button class="reset-btn" id="reset-btn">Reset Saved Progress</button>
+</footer>
+<div id="toast" role="status"></div>
+
+<script>
+let state={gears:0,totalGearsEarned:0,clickPower:1,globalMultiplier:1,currentPlanet:'lua',marsUnlocked:false,activeStoryId:null,gearAngle:0,manualBoost:0,overdriveTime:0,overdriveCount:0};
+const PRICE_GROWTH=1.15,MARS_COST=150000;
+const E=(id,name,icon,planet,baseCost,baseGps,desc,title,text,reward,question,options,correctIndex)=>({id,name,icon,planet,baseCost,baseGps,owned:0,desc,story:{title,text,reward,quizCompleted:false,question,options,correctIndex}});
+const equipments=[
+E('surveyor','Surveyor Probes','🛬','lua',15,0.4,'Robotic probes from the 1960s that proved a soft landing on the Moon was possible.','Chapter 1: Proving the Moon Could Bear the Weight (1966–1968)','In the early 1960s, the United States had made a bold commitment: to put astronauts on the Moon before the decade was out. But one uncomfortable question had no answer. Nobody knew for sure what kind of ground a spacecraft would land on. Some scientists feared the surface was covered by a layer of dust so deep and fluffy that it would swallow any lander; others thought the terrain would be hard and full of sharp rocks. Before risking human lives, robots had to be sent to take a close look.\n\nThe answer was the Surveyor program, run by NASA’s Jet Propulsion Laboratory (JPL), with the spacecraft built by Hughes Aircraft Company. Each Surveyor was a three-legged probe about three meters tall, with a light frame of aluminum tubing. It had to do something no American machine had ever managed: land softly on another world, without a crew and without real-time control during the descent, because a radio signal takes about a second and a half to make the round trip to the Moon.\n\nTo come down without smashing itself, the probe used a radar altimeter, a large solid-fuel braking motor, and small fine-tuning thrusters called verniers, which held its speed over the last few meters. When it touched down, it weighed just over 300 kilograms. Seven probes were launched between 1966 and 1968, all on Atlas-Centaur rockets.\n\nEach Surveyor’s job was to be NASA’s eyes and hands on the surface. Television cameras sent back thousands of photographs of the terrain, of the probe’s own legs, and of the sky. Some carried a mechanical scoop that dug into the soil and tested its strength, and others carried an instrument that bombarded the soil with alpha particles to find out its chemical makeup. The result pointed to a rock similar to basalt on Earth.\n\nSurveyor 1 landed on June 2, 1966, in the Ocean of Storms, and was the first American soft landing on the Moon. The images showed firm ground, covered by a fine dust that held the probe up without any trouble. Two missions failed: Surveyor 2 lost control during the trip and Surveyor 4 stopped transmitting moments before landing. The other five succeeded, and Surveyor 6 even made a hop: it fired its engines and rose a few meters to land a little farther on, the first liftoff of a spacecraft from the lunar surface.\n\nSurveyor 7 landed in 1968 near the crater Tycho, a rugged and far more difficult region, showing that the technology worked even in tricky terrain. In parallel, the Lunar Orbiter probes mapped possible landing sites, and together the two programs formed the catalog Apollo needed.\n\nThe Surveyors’ legacy is remembered in a curious episode. In November 1969, the Apollo 12 astronauts landed a few hundred meters from Surveyor 3 and walked over to it. They removed parts, such as the camera, and brought them back to Earth for analysis after more than two years of exposure to the lunar environment. Today, the Surveyors remain silent on the Moon, and what they proved gave people the courage for the next step: landing humans.',30,'What did the Surveyors prove before Apollo?',['That soft landings were possible and the ground could support a lander','That there was liquid water on the Moon','That the Moon was hollow inside'],0),
+E('apollolm','Apollo Lunar Modules','🦅','lua',120,1.7,'Descent stages, like that of Eagle (Apollo 11), were left on the Moon as a launch platform.','Chapter 2: One Small Step and a Base Left Behind (1969)','When NASA decided, in 1962, that it would use the lunar orbit rendezvous method to reach the Moon, it became clear that a craft built only for landing would be needed. It would never again face Earth’s atmosphere and would operate only in vacuum and in the Moon’s weak gravity, about one sixth of Earth’s. That freedom allowed an unprecedented design: a light vehicle with no aerodynamics, shaped something like an insect. The contractor chosen was Grumman, of New York, which built the Lunar Module, known by the acronym LM.\n\nEvery extra kilogram on the module required more fuel in the rocket that would carry it to the Moon, so the engineers cut weight everywhere. The cabin walls were paper-thin, and the structure was made of light aluminum alloys. There were no seats for the astronauts, who flew standing up, held in by cables, which also saved mass and improved the view through the triangular windows.\n\nThe module had two stages. The descent stage had four legs, the fuel tanks, and an engine whose thrust could be adjusted in mid-flight, something rare at the time. The ascent stage housed the pressurized cabin, the controls, and a smaller engine, simple and reliable, that used propellants that ignite on contact, with no need for an ignition system. That engine could not fail: it was the only way for the astronauts to leave the Moon.\n\nThe two stages’ roles were complementary. The descent stage carried the crew to the surface and was then left behind. Its body served as a launch platform for the ascent stage, which lifted off with the astronauts and the rock samples and returned to lunar orbit to meet the command module. That is why the image left on the Moon, at every landing site, is of a golden metal base, legs spread, alone.\n\nEagle, the name of the Apollo 11 module, descended on July 20, 1969, with Neil Armstrong and Buzz Aldrin, while Michael Collins waited in orbit. During the descent, the onboard computer raised overload alarms, and Armstrong noticed that the autopilot was taking the craft toward a crater full of boulders. He took manual control and flew past it, until he found a smooth patch, with very little fuel left. Armstrong and Aldrin spent about two and a half hours outside the module and about 21 hours on the surface.\n\nIn all, six lunar modules landed on the Moon, on the Apollo 11, 12, 14, 15, 16, and 17 missions. Another, Apollo 13’s, never landed but became legendary: it served as a lifeboat for the three astronauts after the explosion in the service module, and its descent engine was used to correct the course back home.\n\nToday, all six descent stages remain at the landing sites, along with flags, footprints, and equipment. They are a reminder that one of the most fragile machines ever built was also one of the most successful, and that its remains became permanent monuments to the human presence on another world.',240,'What happened to Eagle’s descent stage?',['It returned to Earth with the astronauts','It was left on the Moon as a launch platform','It was launched toward the Sun'],1),
+E('alsep','ALSEP Science Packages','📡','lua',960,9.6,'Experiments left on the Moon to keep doing science after the astronauts departed.','Chapter 3: Science That Stayed on the Moon (1969–1977)','When Neil Armstrong and Buzz Aldrin left the Moon in 1969, the scientific work of their mission did not end. They had left behind a small set of instruments to keep measuring the Moon on their own. That first package, simple and designed to last only a few weeks, paved the way for a larger network: ALSEP, which stands for Apollo Lunar Surface Experiments Package.\n\nThe idea came from a practical realization. An astronaut visit lasts only a few days, but many lunar phenomena only show up with long observation: quakes, temperature swings, changes in the magnetic field. To study them, a laboratory was needed that could run for years with nobody around. That laboratory was designed by teams at NASA and contracted companies, and each mission carried a different set of instruments, adapted to the goals of the site.\n\nThe heart of each ALSEP was a central station, with a radio, a command decoder, and the power distribution system. Because the lunar night lasts about two Earth weeks and is extremely cold, solar panels were not enough. Power came from a radioisotope generator, which turned the heat of plutonium-238 decay into electricity and ran day and night. The astronauts assembled everything by hand: they unpacked the parts, spread out the instruments, leveled, aligned, and connected cables, and only then did the station begin transmitting.\n\nThe instruments varied between missions, but included seismometers to listen for moonquakes, magnetometers, solar wind particle detectors, gauges for the nearly nonexistent atmosphere, and, on Apollo 15 and 17, heat-flow probes buried in the ground. The seismometers recorded thousands of events: deep quakes, shallow quakes, meteoroid impacts, and even the crash of rocket stages that NASA deliberately sent into the Moon to serve as a source of seismic waves.\n\nWith this data, scientists learned that the Moon has a crust, a mantle, and a small core, and that it is much quieter than Earth, yet reacts to temperature changes and to our planet’s gravitational pull. The heat measurements helped estimate how much internal heat the Moon still releases.\n\nThe packages worked well beyond expectations, until, on September 30, 1977, NASA ordered them shut down to cut costs. The transmitters fell silent, but the data is still kept in archives and is still being reanalyzed with modern techniques. The laser reflectors left by some missions, which need no electricity, are still in use: observatories on Earth fire laser beams at them and measure the round-trip travel time. That is how we know the Moon is moving away from Earth by about 3.8 centimeters per year.\n\nALSEP is an example of a scientific robot that was abandoned but not forgotten. It sits on the surface, without power, and yet it keeps contributing to science almost half a century later.',1900,'What was the role of the ALSEP packages?',['To do science on the Moon after the astronauts left','To transport astronauts across the surface','To launch rockets back to Earth'],0),
+E('lrv','Lunar Rovers (LRV)','🚙','lua',7700,59,'Three electric rovers driven by the astronauts and parked on the Moon forever.','Chapter 4: Driving Beyond the Lunar Horizon (1971–1972)','On the first three landing trips, Apollo 11, 12, and 14, the astronauts explored the Moon on foot, carrying instruments and samples. The problem was that walking in a spacesuit is tiring and slow, and for safety they could not stray far from the lunar module: they had to be able to walk back if the vehicle broke down. For the final missions, more ambitious and with more interesting and distant landing sites, NASA wanted something that would extend that range.\n\nThe solution was the Lunar Roving Vehicle, the LRV, popularly called the lunar rover. Boeing was the main contractor, with wheels developed by General Motors’ division. The challenge was huge: the vehicle had to be light, foldable to fit in a side bay of the lunar module, work in vacuum, withstand temperature swings of hundreds of degrees, and be set up by astronauts in thick gloves in a few minutes. The deadline was short, and the project was completed in about 17 months.\n\nThe result was a two-seat electric car, with an aluminum chassis and about 210 kilograms on Earth, that could carry more than twice that in cargo, because gravity on the Moon is weak. Each wheel had its own electric motor, and both the rear and front wheels could steer, which gave great maneuverability. The wheels were made of steel wire mesh, with titanium treads, because ordinary rubber tires could not withstand the environment. Power came from silver-zinc batteries, which were not rechargeable. A navigation console showed heading, distance, and speed, and a system calculated the path back to the lunar module.\n\nThe LRV brought to the Moon the same ambition the program had on Earth: to do real science. The astronauts used the rover to reach craters, hills, and valleys, carrying tools, cameras, a long-range radio, and sample bags. A television camera on the vehicle let Mission Control follow the work in real time.\n\nThree rovers were taken to the Moon: one on Apollo 15, in 1971, with David Scott and James Irwin, another on Apollo 16, in 1972, with John Young and Charles Duke, and another on Apollo 17, also in 1972, with Eugene Cernan and Harrison Schmitt. Adding up the routes, the astronauts drove dozens of kilometers, and Apollo 17 alone passed 30 kilometers. The maximum design speed was around 13 kilometers per hour, but Cernan even recorded a little more on a downhill stretch.\n\nOne episode became famous on Apollo 17. A fender on the rover broke, and the fine, abrasive lunar dust began to be thrown onto the astronauts and equipment. The solution came from the astronauts themselves, who improvised a new fender from maps, duct tape, and clamps, and the team in Houston guided the repair.\n\nWhen each mission ended, the rover was parked, with its TV camera pointed at the lunar module to broadcast the liftoff to Earth. After that, nobody returned. All three LRVs remain where they were left, abandoned in the dust, as monuments to a time when humanity drove on another world.',15000,'How many lunar rovers (LRVs) were taken to the Moon?',['One','Three','Twelve'],1),
+E('viking','Viking 1 and 2 Landers','🛸','marte',61000,380,'The first US landers to operate on Mars (1976). They remain where they landed.','Chapter 5: The Search for Life on Mars (1976)','By 1975, humans had already walked on the Moon, but Mars was still an enigma. The Mariner probes had shown a planet of craters, volcanoes, and dry channels, very different from the romantic vision of earlier centuries, which imagined civilizations and canals. The question that intrigued scientists most was simple and profound: is there life there? To try to answer it, NASA created the Viking program, the most expensive and complex planetary robotic project of its time, costing on the order of a billion dollars.\n\nEach Viking mission had two parts: an orbiter and a lander. The orbiters would stay in orbit photographing the planet and relaying data. The landers, built by Martin Marietta and managed by the Langley Research Center, would descend to the surface, protected by a heat shield, a parachute, and braking rockets that controlled the last meters of the descent. They were machines of about 600 kilograms, with three legs and a hexagonal body.\n\nBoth spacecraft were launched in August and September 1975. Viking 1 reached Mars in June 1976, but the first chosen site looked dangerous in the orbiter’s images, and the landing was postponed. On July 20, 1976, exactly seven years after Apollo 11, the lander descended on Chryse Planitia, the Plain of Chryse. On September 3, Viking 2 landed on Utopia Planitia, farther north.\n\nThe photos that arrived were a sensation: a reddish desert, full of rocks, under a salmon-colored sky. But the main goal was science. Each lander carried a robotic arm to collect soil samples and a compact biology laboratory, with three experiments to look for signs of microbial metabolism. There was also a mass spectrometer, which searched for organic compounds, chemistry instruments, cameras, weather stations, and seismometers. Power came from radioisotope generators, which allowed them to operate even through the Martian winter.\n\nThe results were baffling. One of the biology experiments gave a reaction that, at first, resembled the activity of organisms, but the spectrometer found no organic molecules in the soil. The explanation most accepted today is that the soil contains highly reactive chemicals that mimicked life without being life. Viking did not prove that Mars is inhabited, nor that it is sterile, and it left behind a question that later missions are still chasing.\n\nThe orbiters, meanwhile, photographed practically the entire surface of Mars and created the first global maps, showing giant valleys, immense volcanoes, and ancient riverbeds. Those images shaped planetary science for decades. The Viking 2 lander worked until 1980, and Viking 1’s was the longevity champion: it transmitted until November 11, 1982, more than six years after landing, and was later renamed in honor of the scientist Thomas Mutch.\n\nToday, both landers remain exactly where they touched the ground, without power, covered in dust, as monuments to one of the boldest exploration missions of the twentieth century.',120000,'In what year did the Viking landers reach Mars?',['1976','1969','1997'],0),
+E('sojourner','Sojourner Rover','🤖','marte',490000,2580,'The first rover on Mars (1997), carried by Pathfinder. Today it is parked forever.','Chapter 6: First Wheels on Mars (1997)','After the success of Viking, NASA went almost twenty years without landing on Mars. In the 1990s, the idea was to fly smaller, faster, cheaper missions. The Discovery program was created in that spirit, and its pioneering Mars mission, Mars Pathfinder, aimed to test a new way of landing and to prove that a small rover could explore the surface. The total cost was about 265 million dollars, a fraction of what Viking had cost.\n\nThe rover was named Sojourner, which can be translated as traveler. The name came from a student contest and honors Sojourner Truth, a nineteenth-century abolitionist and women’s rights advocate who traveled the country speaking out against slavery. It was a rover the size of a microwave oven, about 65 centimeters long and just over 10 kilograms.\n\nSojourner had six wheels, connected by an articulated suspension system called rocker-bogie, which let it climb over rocks without tipping. Its power came from a small solar panel on top, with non-rechargeable batteries as backup. It communicated with Earth through the landing module, Pathfinder, which served as a radio station and fixed base, and so it only roamed a little over a dozen meters around it.\n\nThe descent was one of the most creative ever made. The craft entered the atmosphere protected by a shield, opened a parachute, and fired braking rockets near the ground. Then the module was wrapped in large airbags and dropped from a height of several dozen meters, bouncing across the surface until it stopped. When the airbags deflated and the module’s petals opened, Sojourner rolled out down a ramp.\n\nThe landing was on July 4, 1997, in Ares Vallis, an ancient giant flood area. On Mars, a day is called a sol and lasts about 24 hours and 40 minutes. The rover’s mission was planned for seven sols, with the goal of proving the concept worked, and an extension if all went well.\n\nThe rover went far beyond that. Its main instrument, an alpha particle X-ray spectrometer, touched the rocks and revealed their chemical composition. Scientists gave the rocks nicknames, like Barnacle Bill and Yogi, and found that some were different from the expected basaltic rocks, suggesting a more complex geological history. Cameras on the rover and the lander sent thousands of images, and public interest was so great that the mission’s website broke traffic records at the time.\n\nSojourner worked for 83 sols, more than ten times what was planned, and traveled about a hundred meters in total. Communication with Pathfinder ended in September 1997. Today the little rover is parked forever, beside the lander, renamed in honor of the astronomer Carl Sagan. Its legacy was enormous: it showed that rovers were viable and paved the way for all those that followed.',980000,'How long was Sojourner designed to operate?',['15 years','7 Martian days','1 hour'],1),
+E('spiritopp','Spirit and Opportunity','🛞','marte',3900000,17700,'Twin rovers that operated for years. Today they are inactive monuments to Mars exploration.','Chapter 7: The Tireless Twins (2004–2018)','In the early 2000s, the motto of Mars exploration had a name: follow the water. If the planet once had abundant liquid water, perhaps it once had conditions for life. To investigate, NASA planned two twin rovers, much larger and more capable than Sojourner, in a project called the Mars Exploration Rover. The two were named Spirit and Opportunity, names chosen in a student contest and tied to the ideas of courage and the chance of discovery.\n\nEach rover weighed about 185 kilograms, was a little over a meter and a half long, and worked as a robot geologist on six wheels. On top was a mast with panoramic cameras and a spectrometer that detected minerals by the heat they emitted. On the robotic arm were instruments for touching the rock: a microscope, an X-ray spectrometer, another that identified iron-bearing minerals, and an abrasion tool that scraped the surface of rocks to show the interior clean of dust. Power came from solar panels that recharged batteries.\n\nBoth were launched in 2003 and landed with the same parachute, rocket, and airbag system as Pathfinder. Spirit landed on January 4, 2004, in Gusev crater, where there were signs of an ancient lake. Opportunity arrived on January 25, in the flat region of Meridiani Planum, on the other side of the planet. Each had a planned mission of 90 Martian sols, and the expectation was that they would end in a few months.\n\nWhat happened went far beyond that. Opportunity found small spheres rich in hematite, nicknamed blueberries, and layers of rock formed in the presence of salt water, which showed that liquid water had existed there. Spirit, in turn, discovered silica-rich soil, which suggested ancient hot springs or fumaroles, environments that on Earth harbor microbes. Together they showed that Mars was much wetter in the past.\n\nThe rovers also faced problems. Wheels jammed, panels were covered in dust and later cleaned by gusts of wind, and Spirit got stuck in soft sand in 2009. Engineers tried to free it for months, in vain, and it began to work as a fixed station. The last communication was in March 2010. Opportunity kept going for more than fourteen years, driving about 45 kilometers, more than a marathon.\n\nIn June 2018, a global dust storm covered Mars and blocked the light of the Sun. Opportunity stopped responding, and the teams spent months sending commands. In February 2019, NASA declared the end of the mission. Its last signal was rendered by journalists as a poetic phrase: my battery is low and it’s getting dark. Today both rovers sit on Mars, inactive, as monuments to human curiosity.',7800000,'What was the planned duration of the twin rovers’ mission?',['14 years','1 Earth year','90 Martian days'],2),
+E('phoenixinsight','Phoenix and InSight','🧊','marte',31000000,124000,'Phoenix dug up water ice; InSight listened to Martian quakes. Both lost power.','Chapter 8: Ice and Quakes on Mars (2008–2022)','Mars hides signs of water in the past, but what about today? In 2008, a mission was designed to touch real water: Phoenix, a name that recalls the mythical bird that is reborn, because the probe reused parts and instruments from earlier missions that had been canceled or lost. Led by the University of Arizona, it chose a daring target: the icy plains near the Martian north pole.\n\nPhoenix was a stationary lander, not a rover, weighing about 350 kilograms, with circular fan-shaped solar panels. It landed on May 25, 2008, using a parachute and braking rockets, like Viking, instead of airbags. Its main instrument was a robotic arm more than two meters long, with a scoop that dug into the ground. Samples went into small ovens that heated the soil and analyzed the gases released, and another laboratory mixed soil with water to study its chemistry.\n\nResults came quickly. When it scraped the soil, the arm exposed bright chunks that vanished within a few days, evaporating: it was water ice, hidden just below the surface. Phoenix also detected salts called perchlorates, which affect soil chemistry, and recorded snow falling from clouds, something never before seen on Mars. The mission was planned for three months, but Phoenix worked for more than five, until polar winter, with its darkness and dust, cut off the panels’ power in November 2008.\n\nInSight, launched in 2018, had a different goal: to look inside Mars. Its name is an acronym for Interior Exploration using Seismic Investigations, Geodesy and Heat Transport, and the English word insight also means perception. InSight landed on November 26, 2018, on Elysium Planitia, a smooth and safe plain. It was a stationary lander, with technology derived from Phoenix’s.\n\nIts main instrument, a French seismometer called SEIS, was placed on the ground by a robotic arm and shielded from the wind by a dome. It was so sensitive that it detected vibrations smaller than the diameter of a hydrogen atom. There was also a heat probe, a hammering mechanism that tried to bury itself in the ground but failed because of the consistency of the terrain, and a radio experiment that measured Mars’s rotation.\n\nWith SEIS, InSight detected more than a thousand quakes, the marsquakes, and meteoroid impacts. The largest came close to magnitude 5, in 2022. The seismic waves made it possible to measure the thickness of the crust and to discover that Mars’s core is liquid and larger than thought. For the first time, we had an X-ray of the interior of another planet.\n\nOver time, dust accumulated on the solar panels, and power dropped. On December 21, 2022, NASA declared the end of the mission, after InSight failed to respond to two attempts at contact. Today, Phoenix and InSight sit on Mars, without power, but their data keeps helping us understand where we come from.',62000000,'What did InSight listen to on Mars?',['Radio signals from another civilization','Marsquakes (Martian earthquakes)','Ice storms'],1)
+];
+const TAGS=['Role','History','Abandonment'],KU=[7,25,85],MU=[2,2,3];
+const UP=[
+['surveyor',0,'High-resolution TV cameras','The Surveyors sent back thousands of photos of the lunar surface.'],
+['surveyor',1,'Five landings in seven attempts','The 1966–68 experience proved that soft landing worked.'],
+['surveyor',2,'Silenced probes','Today they are silent on the Moon, but their data paved the way.'],
+['apollolm',0,'Throttleable descent engine','Let Eagle adjust its landing even with little fuel.'],
+['apollolm',1,'Sea of Tranquility','The 1969 landing inspires new engineering teams.'],
+['apollolm',2,'Reused launch platform','The descent stage stayed on the Moon as the launch base.'],
+['alsep',0,'Seismometers and reflectors','Instruments that kept measuring after the astronauts left.'],
+['alsep',1,'Five Apollo stations','Packages installed on several missions expand the data.'],
+['alsep',2,'1977 shutdown','The packages were abandoned, but their data remains in the archives.'],
+['lrv',0,'Silver-zinc batteries','More power to travel dozens of kilometers.'],
+['lrv',1,'Apollo 15, 16, and 17','Three rovers expanded the geological exploration of the Moon.'],
+['lrv',2,'Parked forever','The rovers stayed parked on the Moon, as landmarks of exploration.'],
+['viking',0,'Biology experiments','Tests searching for microbial life in the Martian soil.'],
+['viking',1,'Chryse and Utopia','The 1976 landings opened the era of landers on Mars.'],
+['viking',2,'Where they landed','The landers stayed exactly where they touched the ground.'],
+['sojourner',0,'APXS spectrometer','Analyzes the composition of Martian rocks.'],
+['sojourner',1,'Mars Pathfinder','The 1997 airbag landing inspired future missions.'],
+['sojourner',2,'Parked forever','The little rover stayed parked beside Pathfinder.'],
+['spiritopp',0,'Robotic arm and solar panels','More rock analysis and power to travel far.'],
+['spiritopp',1,'90-sol mission that lasted years','The twins far exceeded the plan for a long time.'],
+['spiritopp',2,'Inactive monuments','Both stopped operating and are now monuments on Mars.'],
+['phoenixinsight',0,'Ice scoop and seismometer','Digging ice and listening to marsquakes.'],
+['phoenixinsight',1,'Water ice and marsquakes','Discoveries about the ice and the interior of Mars.'],
+['phoenixinsight',2,'Out of power','Both lost power, but their data continues.']
+];
+const upgrades=[...UP.map(([eq,t,name,desc],i)=>({id:'u'+i,eq,tag:TAGS[t],name,desc:desc+' (×'+MU[t]+' on this equipment)',cost:Math.round(equipments.find(e=>e.id===eq).baseCost*KU[t]),mult:MU[t],bought:false})),
+...[['Mission Control Training','Trained operators double the gain per click.',500,2],['Deep Space Network Antennas','Better communication doubles the gain per click.',20000,2],['Apollo Guidance Computer','Faster calculations double the gain per click.',2000000,2],['Interplanetary Communication Network','Triples the gain per click.',200000000,3]].map(([name,desc,cost,mult],i)=>({id:'c'+i,click:true,tag:'Control',name,desc,cost,mult,bought:false}))];
+const allQuiz=pl=>equipments.filter(e=>!pl||e.planet===pl).every(e=>e.story.quizCompleted);
+const achievements=[
+{id:'a1',title:'First Step',desc:'Buy your first piece of space equipment.',check:()=>equipments.some(e=>e.owned>=1)},
+{id:'a_eng',title:'Overload Engineer',desc:'Activate the Gear Engine’s 2x Turbo mode for the first time.',check:()=>state.overdriveCount>=1},
+{id:'a2',title:'Cosmic Historian',desc:'Complete your first quiz in the Story tab.',check:()=>equipments.some(e=>e.story.quizCompleted)},
+{id:'a_lua',title:'Master of the Moon',desc:'Complete all the quizzes of the lunar phase.',check:()=>allQuiz('lua')},
+{id:'a3',title:'Explorer of Two Worlds',desc:'Start the Mars phase and install a piece of equipment there.',check:()=>state.marsUnlocked&&equipments.some(e=>e.planet==='marte'&&e.owned>=1)},
+{id:'a_ab',title:'Monument Keeper',desc:'Install 3 Abandonment upgrades.',check:()=>upgrades.filter(u=>u.bought&&u.tag==='Abandonment').length>=3},
+{id:'a4',title:'Master of Exploration',desc:'Complete all the historical quizzes in the archive.',check:()=>allQuiz()},
+{id:'a_up',title:'Complete Legacy',desc:'Install all upgrades.',check:()=>upgrades.every(u=>u.bought)}
+];
+let unlockedAch=[];
+const PLANETS={lua:{t:'Lunar Surface',d:'Lunar terrain. Buy equipment to install it here.'},marte:{t:'The Red Planet',d:'Martian terrain. Buy equipment to install it here.'}};
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function saveGame(){
+  try{localStorage.setItem('legado_espacial_v3',JSON.stringify({gears:state.gears,totalGearsEarned:state.totalGearsEarned,overdriveCount:state.overdriveCount,marsUnlocked:state.marsUnlocked,ach:unlockedAch,
+    equipments:equipments.map(e=>({id:e.id,owned:e.owned,quizCompleted:e.story.quizCompleted})),upgrades:upgrades.map(u=>({id:u.id,bought:u.bought}))}))}catch(e){}
+}
+function loadGame(){
+  let raw=null;try{raw=localStorage.getItem('legado_espacial_v3')}catch(e){}
+  if(!raw)return;
+  try{
+    const d=JSON.parse(raw);
+    state.gears=d.gears||0;state.totalGearsEarned=d.totalGearsEarned||0;state.overdriveCount=d.overdriveCount||0;state.marsUnlocked=!!d.marsUnlocked;unlockedAch=d.ach||[];
+    (d.equipments||[]).forEach(x=>{const t=equipments.find(e=>e.id===x.id);if(t){t.owned=x.owned||0;t.story.quizCompleted=!!x.quizCompleted}});
+    (d.upgrades||[]).forEach(x=>{const t=upgrades.find(u=>u.id===x.id);if(t)t.bought=!!x.bought});
+  }catch(e){}
+  recompute();
+}
+let resetArmed=false;
+$('reset-btn').addEventListener('click',()=>{
+  const b=$('reset-btn');
+  if(!resetArmed){resetArmed=true;b.textContent='Click again to erase everything';setTimeout(()=>{resetArmed=false;b.textContent='Reset Saved Progress'},4000);return}
+  try{localStorage.removeItem('legado_espacial_v3')}catch(e){}
+  Object.assign(state,{marsUnlocked:false,currentPlanet:'lua',gears:0,totalGearsEarned:0,clickPower:1,globalMultiplier:1,activeStoryId:null,manualBoost:0,overdriveTime:0,overdriveCount:0});
+  equipments.forEach(e=>{e.owned=0;e.story.quizCompleted=false});upgrades.forEach(u=>u.bought=false);recompute();unlockedAch=[];
+  resetArmed=false;b.textContent='Reset Saved Progress';updateUI();
+});
+
+const getCost=eq=>Math.floor(eq.baseCost*Math.pow(PRICE_GROWTH,eq.owned));
+const odMult=()=>state.overdriveTime>0?2:1;
+const eqMult=eq=>upgrades.filter(u=>u.bought&&u.eq===eq.id).reduce((p,u)=>p*u.mult,1);
+const recompute=()=>{state.clickPower=upgrades.filter(u=>u.bought&&u.click).reduce((p,u)=>p*u.mult,1)};
+const fmtG=n=>n<10?(Math.round(n*10)/10).toLocaleString('en-US'):Math.floor(n).toLocaleString('en-US');
+const lunarDone=()=>equipments.filter(e=>e.planet==='lua').every(e=>e.owned>0);
+const NASA='<svg viewBox="0 0 100 100" width="26" height="26" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#0b3d91"/><g fill="#fff"><circle cx="20" cy="30" r="1.6"/><circle cx="36" cy="12" r="1.2"/><circle cx="76" cy="20" r="1.5"/><circle cx="86" cy="44" r="1.2"/><circle cx="14" cy="54" r="1.2"/></g><ellipse cx="50" cy="50" rx="47" ry="14" transform="rotate(-28 50 50)" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M10 78C30 74 46 56 56 34 60 52 72 64 90 66 68 68 54 76 48 90 46 78 30 76 10 78Z" fill="#fc3d21"/><text x="50" y="58" text-anchor="middle" font-size="21" font-weight="700" font-style="italic" fill="#fff" font-family="Arial,sans-serif">NASA</text></svg>';
+const baseGps=()=>equipments.reduce((s,e)=>s+e.owned*e.baseGps*eqMult(e),0)*state.globalMultiplier;
+const getTotalGps=()=>baseGps()*odMult();
+const formatNum=n=>Math.floor(n).toLocaleString('en-US');
+let toastT;
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),2400)}
+
+$('manual-click-btn').addEventListener('click',()=>{
+  const gain=state.clickPower*odMult();
+  state.gears+=gain;state.totalGearsEarned+=gain;state.gearAngle+=18;
+  if(state.overdriveTime<=0){
+    state.manualBoost=Math.min(100,state.manualBoost+8);
+    if(state.manualBoost>=100){state.overdriveTime=10;state.overdriveCount++}
+  }
+  lightUpdate();checkAch();
+});
+function buyEquipment(id){
+  const eq=equipments.find(e=>e.id===id),c=getCost(eq);
+  if(state.gears>=c){state.gears-=c;eq.owned++;if(eq.owned===1)toast('Mission unlocked in the Story tab!');saveGame();updateUI()}
+}
+function buyUpgrade(id){
+  const up=upgrades.find(u=>u.id===id);
+  if(!up.bought&&state.gears>=up.cost){state.gears-=up.cost;up.bought=true;recompute();saveGame();updateUI()}
+}
+function unlockMars(){
+  if(state.gears>=MARS_COST&&!state.marsUnlocked){state.gears-=MARS_COST;state.marsUnlocked=true;state.currentPlanet='marte';toast('Mars phase started!');saveGame();updateUI()}
+}
+
+function renderResearch(){
+  const p=state.currentPlanet;
+  let h=equipments.filter(e=>e.planet===p).map(eq=>`<div class="card"><div><div class="card-top"><span class="card-title">${eq.icon} ${esc(eq.name)}</span><span class="badge">×${eq.owned}</span></div>
+  <p class="card-desc">${esc(eq.desc)}</p><p class="card-meta">+${fmtG(eq.baseGps*eqMult(eq))} ⚙/s each</p></div>
+  <button class="buy-btn" data-buy="${eq.id}">Buy — ${formatNum(getCost(eq))} ⚙</button></div>`).join('');
+  if(p==='lua'&&!state.marsUnlocked)h=`<div class="card"><div><div class="card-top"><span class="card-title">🔴 Mars Program</span></div><p class="card-desc">Second phase of the game: unlocks Viking, Sojourner, Spirit and Opportunity, Phoenix and InSight.</p><p class="card-meta" data-mars-prog></p></div><button class="buy-btn" data-mars="1">Start Mars phase — ${formatNum(MARS_COST)} ⚙</button></div>`+h;
+  $('research-grid').innerHTML=h;
+}
+function renderTerrain(){
+  const p=state.currentPlanet;
+  document.querySelectorAll('.planet-btn').forEach(b=>b.classList.toggle('active',b.dataset.planet===p));
+  $('terrain-box').className='terrain-box '+p;
+  $('terrain-title').textContent=PLANETS[p].t;$('terrain-desc').textContent=PLANETS[p].d;
+  const items=equipments.filter(e=>e.planet===p&&e.owned>0).map(e=>`<span class="terrain-item">${e.icon} ${esc(e.name)} ×${e.owned}</span>`);
+  $('terrain-items').innerHTML=items.join('')||'<span class="empty">No equipment installed here yet.</span>';
+}
+function renderStory(){
+  const box=$('story-body');
+  if(state.activeStoryId){
+    const eq=equipments.find(e=>e.id===state.activeStoryId),s=eq.story;
+    box.innerHTML=`<button class="back-btn" id="story-back">← Back to missions</button><div class="story-reader"><h3>${esc(s.title)}</h3><p class="story-text">${esc(s.text)}</p>
+    <div class="quiz-box"><h4>Quiz${s.quizCompleted?' (completed)':' — reward: '+formatNum(s.reward)+' ⚙'}</h4><p>${esc(s.question)}</p>
+    <div class="quiz-options">${s.options.map((o,i)=>`<button class="quiz-opt ${s.quizCompleted&&i===s.correctIndex?'correct':''}" data-opt="${i}" ${s.quizCompleted?'disabled':''}>${esc(o)}</button>`).join('')}</div><div class="quiz-msg" id="quiz-msg"></div></div></div>`;
+    return;
+  }
+  const open=equipments.filter(e=>e.owned>0);
+  box.innerHTML=open.length?'<div class="grid">'+open.map(e=>`<div class="card"><div class="card-top"><span class="card-title">${e.icon} ${esc(e.story.title)}</span>${e.story.quizCompleted?'<span class="badge">✓</span>':''}</div><button class="buy-btn" data-story="${e.id}">Read chapter</button></div>`).join('')+'</div>'
+    :'<p class="empty">No missions unlocked. Buy a piece of equipment in the Research tab.</p>';
+}
+function renderUpgrades(){
+  const vis=upgrades.filter(u=>u.click||equipments.find(e=>e.id===u.eq).owned>0);
+  $('upgrades-grid').innerHTML=vis.map(u=>`<div class="card ${u.bought?'bought':''}"><div><div class="card-top"><span class="card-title">⚡ ${esc(u.name)}</span><span class="badge">${u.tag}</span></div><p class="card-desc">${esc(u.desc)}</p></div>
+  <button class="buy-btn" data-up="${u.id}" ${u.bought?'disabled':''}>${u.bought?'Installed':'Install — '+formatNum(u.cost)+' ⚙'}</button></div>`).join('')+(vis.length<upgrades.length?'<p class="empty">Buy more equipment to unlock new upgrades.</p>':'');
+}
+function renderAch(){
+  $('ach-grid').innerHTML=achievements.map(a=>{const ok=unlockedAch.includes(a.id);return `<div class="card ${ok?'unlocked':''}"><div class="card-top"><span class="card-title">${ok?'🏆':'🔒'} ${esc(a.title)}</span></div><p class="card-desc">${esc(a.desc)}</p></div>`}).join('');
+}
+function checkAch(){
+  let ch=false;achievements.forEach(a=>{if(!unlockedAch.includes(a.id)&&a.check()){unlockedAch.push(a.id);toast('🏆 Achievement: '+a.title);ch=true}});
+  if(ch)saveGame();
+}
+function updateUI(){
+  document.querySelectorAll('.planet-btn').forEach(b=>{b.classList.toggle('active',b.dataset.planet===state.currentPlanet);if(b.dataset.planet==='marte')b.textContent=state.marsUnlocked?'🔴 Mars':'🔴 Mars 🔒'});
+  checkAch();
+  const tab=document.querySelector('.section.active').id;
+  if(tab==='research')renderResearch();
+  else if(tab==='terrain')renderTerrain();
+  else if(tab==='story')renderStory();
+  else if(tab==='upgrades')renderUpgrades();
+  else renderAch();
+  lightUpdate();
+}
+function lightUpdate(){
+  document.querySelectorAll('[data-mars]').forEach(b=>{b.disabled=state.gears<MARS_COST});
+  document.querySelectorAll('[data-mars-prog]').forEach(e=>{e.textContent=formatNum(Math.min(state.gears,MARS_COST))+' / '+formatNum(MARS_COST)+' ⚙'});
+  if(!state.marsUnlocked&&!state.marsHint&&state.gears>=MARS_COST){state.marsHint=true;toast('You can now start the Mars phase in the Research tab!')}
+  $('gears').textContent=formatNum(state.gears);
+  $('gps').textContent=formatNum(getTotalGps())+'/s';
+  $('click-label').textContent=`Run Engine (+${formatNum(state.clickPower*odMult())})`;
+  document.querySelectorAll('[data-buy]').forEach(b=>{b.disabled=state.gears<getCost(equipments.find(e=>e.id===b.dataset.buy))});
+  document.querySelectorAll('[data-up]').forEach(b=>{const u=upgrades.find(x=>x.id===b.dataset.up);b.disabled=u.bought||state.gears<u.cost});
+}
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');$(btn.dataset.tab).classList.add('active');
+  if(btn.dataset.tab==='story')state.activeStoryId=null;
+  updateUI();
+}));
+document.querySelectorAll('.planet-btn').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.planet==='marte'&&!state.marsUnlocked){toast('Start the Mars phase in the Research tab.');return}state.currentPlanet=b.dataset.planet;updateUI()}));
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.mars)unlockMars();
+  else if(t.dataset.buy)buyEquipment(t.dataset.buy);
+  else if(t.dataset.up)buyUpgrade(t.dataset.up);
+  else if(t.dataset.story){state.activeStoryId=t.dataset.story;renderStory()}
+  else if(t.id==='story-back'){state.activeStoryId=null;renderStory()}
+  else if(t.classList.contains('quiz-opt')&&!t.disabled){
+    const s=equipments.find(x=>x.id===state.activeStoryId).story,i=+t.dataset.opt;
+    if(i===s.correctIndex){
+      s.quizCompleted=true;state.gears+=s.reward;state.totalGearsEarned+=s.reward;
+      document.querySelectorAll('.quiz-opt').forEach(o=>o.disabled=true);t.classList.add('correct');
+      $('quiz-msg').textContent=`Correct! +${formatNum(s.reward)} ⚙`;saveGame();checkAch();lightUpdate();
+    }else{t.classList.add('wrong');t.disabled=true;$('quiz-msg').style.color='var(--red)';$('quiz-msg').textContent='Not this time. Try another option.'}
+  }
+});
+
+let last=performance.now(),saveT=0,uiT=0;
+function loop(t){
+  const dt=Math.min(.25,(t-last)/1000);last=t;
+  const g=getTotalGps()*dt;state.gears+=g;state.totalGearsEarned+=g;
+  if(state.overdriveTime>0){state.overdriveTime-=dt;state.manualBoost=Math.max(0,state.overdriveTime*10);if(state.overdriveTime<=0){state.overdriveTime=0;state.manualBoost=0;lightUpdate()}}
+  else state.manualBoost=Math.max(0,state.manualBoost-dt*12);
+  const od=state.overdriveTime>0;
+  const rpm=Math.round(state.manualBoost*30+Math.min(baseGps(),500)*4);
+  state.gearAngle+=(rpm/60)*360*dt*.2;
+  $('gear-main').style.transform=`rotate(${state.gearAngle}deg)`;
+  $('gear-sec').style.transform=`rotate(${-state.gearAngle*1.46}deg)`;
+  $('gear-ter').style.transform=`rotate(${-state.gearAngle*1.9}deg)`;
+  $('engine-panel').classList.toggle('overdrive',od);
+  $('rpm-fill').style.width=Math.min(100,state.manualBoost)+'%';
+  $('rpm-text').textContent=od?`${formatNum(rpm*2)} RPM · TURBO 2x (${Math.ceil(state.overdriveTime)}s)`:rpm>0?`${formatNum(rpm)} RPM`:'0 RPM (Idle)';
+  uiT+=dt;if(uiT>.25){uiT=0;lightUpdate();checkAch()}
+  saveT+=dt;if(saveT>5){saveT=0;saveGame()}
+  requestAnimationFrame(loop);
+}
+$('nasa-logo').innerHTML=NASA;loadGame();if(!state.marsUnlocked)state.currentPlanet='lua';updateUI();renderTerrain();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
